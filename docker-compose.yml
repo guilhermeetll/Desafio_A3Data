@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend/chroma_langchain_db:/app/backend/chroma_langchain_db
+    networks:
+      - a3data-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000/chat
+    depends_on:
+      - backend
+    networks:
+      - a3data-network
+
+networks:
+  a3data-network:
+    driver: bridge

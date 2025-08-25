@@ -1,0 +1,4 @@
+ocr/chroma_langchain_db
+.venv
+.env
+backend/chroma_langchain_db
