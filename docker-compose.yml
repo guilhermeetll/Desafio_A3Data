@@ -6,10 +6,13 @@ services:
       - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/myapp
     volumes:
       - ./backend/chroma_langchain_db:/app/backend/chroma_langchain_db
     networks:
       - a3data-network
+    depends_on:
+      - postgres
 
   frontend:
     build: ./frontend
@@ -22,6 +25,34 @@ services:
     networks:
       - a3data-network
 
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=myapp
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - a3data-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - a3data-network
+
 networks:
   a3data-network:
     driver: bridge
+
+volumes:
+  postgres_data:
